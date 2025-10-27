@@ -1,0 +1,19 @@
+# Dockerfile.ace-builder
+# Builds an ACE "builder" image that has mqsipackagebar/ibmint available.
+# NOTE: Build/pull from cp.icr.io requires an IBM entitlement key via an ImagePullSecret.
+FROM cp.icr.io/cp/appc/ace:12.0.10.0-r1
+
+# Accept the license (required by ACE images)
+ENV LICENSE=accept
+
+# Non-root user expected by Tekton/OpenShift
+USER 1001
+
+# Optional: set a working dir and keep permissions group-friendly
+WORKDIR /home/aceuser
+RUN mkdir -p /home/aceuser/work && chmod -R g=u /home/aceuser
+
+# (Optional) Pre-install tiny helpers if you need them during packaging
+# RUN microdnf install -y findutils unzip && microdnf clean all
+
+# This image will be used only to run "mqsipackagebar"/"ibmint" in a Tekton step.
